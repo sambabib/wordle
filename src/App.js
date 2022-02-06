@@ -12,9 +12,22 @@ import {
 } from "./styled";
 import { BackspaceIcon } from "./icons";
 import "./App.css";
+import { useEffect } from "react";
+
+const keyboardRows = [
+  ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p"],
+  ["a", "s", "d", "f", "g", "h", "j", "k", "l"],
+  ["enter", "z", "x", "c", "v", "b", "n", "m", "backspace"],
+];
 
 function App() {
   const handleClick = (key) => {};
+
+  useEffect(() => {
+    window.addEventListener("keydown", (e) => {
+      console.log(e.key);
+    });
+  }, []);
 
   return (
     <Main>
@@ -31,34 +44,21 @@ function App() {
         </TileContainer>
       </GameSection>
       <KeyboardSection>
-        <KeyboardRow>
-          {["q", "w", "e", "r", "t", "y", "u", "i", "o", "p"].map((key) => (
-            <KeyboardButton onClick={() => handleClick(key)}>
-              {key}
-            </KeyboardButton>
-          ))}
-        </KeyboardRow>
-        <KeyboardRow>
-          <Flex item={0.5} />
-          {["a", "s", "d", "f", "g", "h", "j", "k", "l"].map((key) => (
-            <KeyboardButton onClick={() => handleClick(key)}>
-              {key}
-            </KeyboardButton>
-          ))}
-          <Flex item={0.5} />
-        </KeyboardRow>
-        <KeyboardRow>
-          {["enter", "z", "x", "c", "v", "b", "n", "m", "backspace"].map(
-            (key) => (
+        {keyboardRows.map((keys, i) => (
+          <KeyboardRow key={i}>
+            {i === 1 && <Flex item={0.5} />}
+            {keys.map((key) => (
               <KeyboardButton
-                flex={["enter", "backspace"].includes(key) ? 1.5 : 1}
+                key={key}
                 onClick={() => handleClick(key)}
+                flex={["enter", "backspace"].includes(key) ? 1.5 : 1}
               >
                 {key === "backspace" ? <BackspaceIcon /> : key}
               </KeyboardButton>
-            )
-          )}
-        </KeyboardRow>
+            ))}
+            {i === 1 && <Flex item={0.5} />}
+          </KeyboardRow>
+        ))}
       </KeyboardSection>
     </Main>
   );
