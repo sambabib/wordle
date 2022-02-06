@@ -12,7 +12,7 @@ import {
 } from "./styled";
 import { BackspaceIcon } from "./icons";
 import "./App.css";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const keyboardRows = [
   ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p"],
@@ -33,30 +33,121 @@ const newGame = {
 };
 
 function App() {
-  /**
-   * [[],[],[],[],[],[]]
-   * [[],[],[],[],[],[]]
-   * [[],[],[],[],[],[]]
-   * [[],[],[],[],[],[]]
-   * [[],[],[],[],[],[]]
-   * [[],[],[],[],[],[]]
-   */
-  const [guesses, setGuesses] = useState(newGame);
+  const wordOfTheDay = "hello";
 
-  const handleClick = (key) => {};
+  const [guesses, setGuesses] = useState({ ...newGame });
+  const [markers, setMarkers] = useState({
+    0: Array.from({ length: wordLength }).fill(""),
+    1: Array.from({ length: wordLength }).fill(""),
+    2: Array.from({ length: wordLength }).fill(""),
+    3: Array.from({ length: wordLength }).fill(""),
+    4: Array.from({ length: wordLength }).fill(""),
+  });
+
+  let letterIndex = useRef(0);
+  let round = useRef(0);
+
+  const submit = () => {
+    const _round = round.current;
+
+    const updatedMarkers = {
+      ...markers,
+    };
+
+    const tempWord = wordOfTheDay.split("");
+
+    // Prioritize the letters in the correct spot
+    tempWord.forEach((letter, index) => {
+      const guessedLetter = guesses[_round][index];
+
+      if (guessedLetter === letter) {
+        updatedMarkers[_round][index] = "green";
+        tempWord[index] = "";
+      }
+    });
+
+    // Then find the letters in wrong spots
+    tempWord.forEach((_, index) => {
+      const guessedLetter = guesses[_round][index];
+
+      // Mark green when guessed letter is in the correct spot
+      if (
+        tempWord.includes(guessedLetter) &&
+        index !== tempWord.indexOf(guessedLetter)
+      ) {
+        // Mark yellow when letter is in the word of the day but in the wrong spot
+        updatedMarkers[_round][index] = "yellow";
+        tempWord[tempWord.indexOf(guessedLetter)] = "";
+      } else if (!tempWord.includes(guessedLetter)) {
+        updatedMarkers[_round][index] = "grey";
+      }
+    });
+
+    setMarkers(updatedMarkers);
+    round.current = _round + 1;
+    letterIndex.current = 0;
+  };
+
+  const erase = () => {
+    const _letterIndex = letterIndex.current;
+    const _round = round.current;
+
+    if (_letterIndex !== 0) {
+      setGuesses((prev) => {
+        const newGuesses = { ...prev };
+        newGuesses[_round][_letterIndex - 1] = "";
+        return newGuesses;
+      });
+
+      letterIndex.current = _letterIndex - 1;
+    }
+  };
+
+  const publish = ({ pressedKey }) => {
+    const _letterIndex = letterIndex.current;
+    const _round = round.current;
+
+    if (_letterIndex < wordLength) {
+      setGuesses((prev) => {
+        const newGuesses = { ...prev };
+        newGuesses[_round][_letterIndex] = pressedKey;
+        return newGuesses;
+      });
+
+      letterIndex.current = _letterIndex + 1;
+    }
+  };
+
+  const handleClick = (key) => {
+    const pressedKey = key.toLowerCase();
+
+    if (pressedKey === "enter") {
+      submit();
+    } else if (pressedKey === "backspace") {
+      erase();
+    } else {
+      publish({ pressedKey });
+    }
+  };
 
   useEffect(() => {
     const handleKeyDown = (e) => {
-      if (allKeys.includes(e.key)) {
-        console.log(e.key);
+      const pressedKey = e.key.toLowerCase();
+
+      if (allKeys.includes(pressedKey)) {
+        if (pressedKey === "enter") {
+          submit();
+        } else if (pressedKey === "backspace") {
+          erase();
+        } else {
+          publish({ pressedKey });
+        }
       }
     };
 
-    window.addEventListener("keydown", handleKeyDown);
+    document.addEventListener("keydown", handleKeyDown);
 
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
+    return () => document.removeEventListener("keydown", handleKeyDown);
   }, []);
 
   return (
@@ -64,10 +155,12 @@ function App() {
       <Header>WORDLE</Header>
       <GameSection>
         <TileContainer>
-          {Object.values(guesses).map((word, i) => (
-            <TileRow key={i}>
+          {Object.values(guesses).map((word, wordIndex) => (
+            <TileRow key={wordIndex}>
               {word.map((letter, i) => (
-                <Tile key={i}>{letter}</Tile>
+                <Tile key={i} hint={markers[wordIndex][i]}>
+                  {letter}
+                </Tile>
               ))}
             </TileRow>
           ))}

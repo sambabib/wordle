@@ -60,6 +60,18 @@ export const Tile = styled.div`
   line-height: 3.2rem;
   text-transform: uppercase;
 
+  ${({ hint }) => {
+    if (hint === "green") {
+      return `background-color: #6aaa64;`;
+    }
+    if (hint === "yellow") {
+      return `background-color: #b59f3b;`;
+    }
+    if (hint === "grey") {
+      return `background-color: #3a3a3c;`;
+    }
+  }}
+
   user-select: none;
 `;
 
