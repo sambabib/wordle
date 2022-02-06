@@ -29,10 +29,56 @@ const Header = styled.header`
   text-transform: uppercase;
 `;
 
+const GameSection = styled.section`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-grow: 1;
+`;
+const TileContainer = styled.div`
+  display: grid;
+  grid-template-rows: repeat(6, 1fr);
+  grid-gap: 5px;
+
+  height: 420px;
+  width: 350px;
+`;
+const TileRow = styled.div`
+  width: 100%;
+
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-gap: 5px;
+`;
+const Tile = styled.div`
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+
+  border: 2px solid #3a3a3c;
+  font-size: 3.2rem;
+  font-weight: bold;
+  line-height: 3.2rem;
+  text-transform: uppercase;
+
+  user-select: none;
+`;
+
 function App() {
   return (
     <Main>
       <Header>WORDLE</Header>
+      <GameSection>
+        <TileContainer>
+          {[0, 1, 2, 3, 4, 5].map((i) => (
+            <TileRow key={i}>
+              {[0, 1, 2, 3, 4].map((i) => (
+                <Tile key={i}></Tile>
+              ))}
+            </TileRow>
+          ))}
+        </TileContainer>
+      </GameSection>
     </Main>
   );
 }
