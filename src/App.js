@@ -14,6 +14,8 @@ import { BackspaceIcon } from "./icons";
 import "./App.css";
 
 function App() {
+  const handleClick = (key) => {};
+
   return (
     <Main>
       <Header>WORDLE</Header>
@@ -31,13 +33,17 @@ function App() {
       <KeyboardSection>
         <KeyboardRow>
           {["q", "w", "e", "r", "t", "y", "u", "i", "o", "p"].map((key) => (
-            <KeyboardButton>{key}</KeyboardButton>
+            <KeyboardButton onClick={() => handleClick(key)}>
+              {key}
+            </KeyboardButton>
           ))}
         </KeyboardRow>
         <KeyboardRow>
           <Flex item={0.5} />
           {["a", "s", "d", "f", "g", "h", "j", "k", "l"].map((key) => (
-            <KeyboardButton>{key}</KeyboardButton>
+            <KeyboardButton onClick={() => handleClick(key)}>
+              {key}
+            </KeyboardButton>
           ))}
           <Flex item={0.5} />
         </KeyboardRow>
@@ -46,6 +52,7 @@ function App() {
             (key) => (
               <KeyboardButton
                 flex={["enter", "backspace"].includes(key) ? 1.5 : 1}
+                onClick={() => handleClick(key)}
               >
                 {key === "backspace" ? <BackspaceIcon /> : key}
               </KeyboardButton>
