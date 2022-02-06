@@ -104,6 +104,10 @@ const KeyboardButton = styled.button`
   }
 `;
 
+const Flex = styled.div`
+  ${({ item }) => `flex: ${item};`}
+`;
+
 function App() {
   return (
     <Main>
@@ -126,9 +130,11 @@ function App() {
           ))}
         </KeyboardRow>
         <KeyboardRow>
+          <Flex item={0.5} />
           {["a", "s", "d", "f", "g", "h", "j", "k", "l"].map((key) => (
             <KeyboardButton>{key}</KeyboardButton>
           ))}
+          <Flex item={0.5} />
         </KeyboardRow>
         <KeyboardRow>
           {["enter", "z", "x", "c", "v", "b", "n", "m", "backspace"].map(
