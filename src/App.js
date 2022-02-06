@@ -64,6 +64,46 @@ const Tile = styled.div`
   user-select: none;
 `;
 
+const KeyboardSection = styled.section`
+  height: 200px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+`;
+
+const KeyboardRow = styled.div`
+  width: 100%;
+  margin: 0 auto 8px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+`;
+
+const KeyboardButton = styled.button`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+  margin: 0 6px 0 0;
+  height: 58px;
+  flex: 1;
+
+  border: 0;
+  border-radius: 4px;
+  background-color: #818384;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: #d7dadc;
+
+  cursor: pointer;
+  user-select: none;
+
+  &:last-of-type {
+    margin: 0;
+  }
+`;
+
 function App() {
   return (
     <Main>
@@ -79,6 +119,25 @@ function App() {
           ))}
         </TileContainer>
       </GameSection>
+      <KeyboardSection>
+        <KeyboardRow>
+          {["q", "w", "e", "r", "t", "y", "u", "i", "o", "p"].map((key) => (
+            <KeyboardButton>{key}</KeyboardButton>
+          ))}
+        </KeyboardRow>
+        <KeyboardRow>
+          {["a", "s", "d", "f", "g", "h", "j", "k", "l"].map((key) => (
+            <KeyboardButton>{key}</KeyboardButton>
+          ))}
+        </KeyboardRow>
+        <KeyboardRow>
+          {["enter", "z", "x", "c", "v", "b", "n", "m", "backspace"].map(
+            (key) => (
+              <KeyboardButton>{key}</KeyboardButton>
+            )
+          )}
+        </KeyboardRow>
+      </KeyboardSection>
     </Main>
   );
 }
