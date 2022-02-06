@@ -12,7 +12,7 @@ import {
 } from "./styled";
 import { BackspaceIcon } from "./icons";
 import "./App.css";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 const keyboardRows = [
   ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p"],
@@ -20,13 +20,43 @@ const keyboardRows = [
   ["enter", "z", "x", "c", "v", "b", "n", "m", "backspace"],
 ];
 
+const allKeys = keyboardRows.flat();
+
+const wordLength = 5;
+
+const newGame = {
+  0: Array.from({ length: wordLength }).fill(""),
+  1: Array.from({ length: wordLength }).fill(""),
+  2: Array.from({ length: wordLength }).fill(""),
+  3: Array.from({ length: wordLength }).fill(""),
+  4: Array.from({ length: wordLength }).fill(""),
+};
+
 function App() {
+  /**
+   * [[],[],[],[],[],[]]
+   * [[],[],[],[],[],[]]
+   * [[],[],[],[],[],[]]
+   * [[],[],[],[],[],[]]
+   * [[],[],[],[],[],[]]
+   * [[],[],[],[],[],[]]
+   */
+  const [guesses, setGuesses] = useState(newGame);
+
   const handleClick = (key) => {};
 
   useEffect(() => {
-    window.addEventListener("keydown", (e) => {
-      console.log(e.key);
-    });
+    const handleKeyDown = (e) => {
+      if (allKeys.includes(e.key)) {
+        console.log(e.key);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
   }, []);
 
   return (
@@ -34,10 +64,10 @@ function App() {
       <Header>WORDLE</Header>
       <GameSection>
         <TileContainer>
-          {[0, 1, 2, 3, 4, 5].map((i) => (
+          {Object.values(guesses).map((word, i) => (
             <TileRow key={i}>
-              {[0, 1, 2, 3, 4].map((i) => (
-                <Tile key={i}></Tile>
+              {word.map((letter, i) => (
+                <Tile key={i}>{letter}</Tile>
               ))}
             </TileRow>
           ))}
