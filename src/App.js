@@ -87,7 +87,7 @@ const KeyboardButton = styled.button`
   padding: 0;
   margin: 0 6px 0 0;
   height: 58px;
-  flex: 1;
+  ${({ item }) => (item ? `flex: ${item};` : `flex: 1;`)}
 
   border: 0;
   border-radius: 4px;
@@ -139,7 +139,11 @@ function App() {
         <KeyboardRow>
           {["enter", "z", "x", "c", "v", "b", "n", "m", "backspace"].map(
             (key) => (
-              <KeyboardButton>{key}</KeyboardButton>
+              <KeyboardButton
+                flex={["enter", "backspace"].includes(key) ? 1.5 : 1}
+              >
+                {key}
+              </KeyboardButton>
             )
           )}
         </KeyboardRow>
