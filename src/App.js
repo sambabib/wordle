@@ -56,6 +56,8 @@ function App() {
 
     const tempWord = wordOfTheDay.split("");
 
+    const leftoverIndices = [];
+
     // Prioritize the letters in the correct spot
     tempWord.forEach((letter, index) => {
       const guessedLetter = guesses[_round][index];
@@ -63,25 +65,32 @@ function App() {
       if (guessedLetter === letter) {
         updatedMarkers[_round][index] = "green";
         tempWord[index] = "";
+      } else {
+        // We will use this to mark other letters for hints
+        leftoverIndices.push(index);
       }
     });
 
     // Then find the letters in wrong spots
-    tempWord.forEach((_, index) => {
-      const guessedLetter = guesses[_round][index];
+    if (leftoverIndices.length) {
+      leftoverIndices.forEach((index) => {
+        const guessedLetter = guesses[_round][index];
+        const correctPositionOfLetter = tempWord.indexOf(guessedLetter);
 
-      // Mark green when guessed letter is in the correct spot
-      if (
-        tempWord.includes(guessedLetter) &&
-        index !== tempWord.indexOf(guessedLetter)
-      ) {
-        // Mark yellow when letter is in the word of the day but in the wrong spot
-        updatedMarkers[_round][index] = "yellow";
-        tempWord[tempWord.indexOf(guessedLetter)] = "";
-      } else if (!tempWord.includes(guessedLetter)) {
-        updatedMarkers[_round][index] = "grey";
-      }
-    });
+        if (
+          tempWord.includes(guessedLetter) &&
+          correctPositionOfLetter !== index
+        ) {
+          // Mark yellow when letter is in the word of the day but in the wrong spot
+          updatedMarkers[_round][index] = "yellow";
+          tempWord[correctPositionOfLetter] = "";
+        } else {
+          // This means the letter is not in the word of the day.
+          updatedMarkers[_round][index] = "grey";
+          tempWord[index] = "";
+        }
+      });
+    }
 
     setMarkers(updatedMarkers);
     round.current = _round + 1;
