@@ -32,6 +32,15 @@ const newGame = {
   4: Array.from({ length: wordLength }).fill(""),
 };
 
+const fetchWord = (word) => {
+  return fetch(`${API_URL}/${word}`, {
+    method: "GET",
+  })
+    .then((res) => res.json())
+    .then((res) => res)
+    .catch((err) => console.log("err:", err));
+};
+
 function App() {
   const wordOfTheDay = "hello";
 
@@ -127,16 +136,24 @@ function App() {
     }
   };
 
+  const enterGuess = async (pressedKey) => {
+    if (pressedKey === "enter" && !guesses[round.current].includes("")) {
+      const validWord = await fetchWord(guesses[round.current].join(""));
+
+      if (Array.isArray(validWord)) {
+        submit();
+      }
+    } else if (pressedKey === "backspace") {
+      erase();
+    } else if (pressedKey !== "enter") {
+      publish({ pressedKey });
+    }
+  };
+
   const handleClick = (key) => {
     const pressedKey = key.toLowerCase();
 
-    if (pressedKey === "enter") {
-      submit();
-    } else if (pressedKey === "backspace") {
-      erase();
-    } else {
-      publish({ pressedKey });
-    }
+    enterGuess(pressedKey);
   };
 
   useEffect(() => {
@@ -144,13 +161,7 @@ function App() {
       const pressedKey = e.key.toLowerCase();
 
       if (allKeys.includes(pressedKey)) {
-        if (pressedKey === "enter") {
-          submit();
-        } else if (pressedKey === "backspace") {
-          erase();
-        } else {
-          publish({ pressedKey });
-        }
+        enterGuess(pressedKey);
       }
     };
 
