@@ -9,10 +9,17 @@ import {
   KeyboardRow,
   KeyboardButton,
   Flex,
+  ShareModal,
+  Heading,
+  Row,
+  ShareButton,
 } from "./styled";
 import { BackspaceIcon } from "./icons";
 import "./App.css";
 import { useEffect, useRef, useState } from "react";
+import Modal from "react-modal";
+
+const API_URL = "https://api.dictionaryapi.dev/api/v2/entries/en";
 
 const keyboardRows = [
   ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p"],
@@ -52,9 +59,16 @@ function App() {
     3: Array.from({ length: wordLength }).fill(""),
     4: Array.from({ length: wordLength }).fill(""),
   });
+  const [isModalVisible, setModalVisible] = useState(false);
+  const [isShared, setIsShared] = useState(false);
 
   let letterIndex = useRef(0);
   let round = useRef(0);
+
+  const win = () => {
+    document.removeEventListener("keydown", handleKeyDown);
+    setModalVisible(true);
+  };
 
   const submit = () => {
     const _round = round.current;
@@ -80,6 +94,12 @@ function App() {
       }
     });
 
+    if (updatedMarkers[_round].every((guess) => guess === "green")) {
+      setMarkers(updatedMarkers);
+      win();
+      return;
+    }
+
     // Then find the letters in wrong spots
     if (leftoverIndices.length) {
       leftoverIndices.forEach((index) => {
@@ -96,7 +116,6 @@ function App() {
         } else {
           // This means the letter is not in the word of the day.
           updatedMarkers[_round][index] = "grey";
-          tempWord[index] = "";
         }
       });
     }
@@ -128,7 +147,7 @@ function App() {
     if (_letterIndex < wordLength) {
       setGuesses((prev) => {
         const newGuesses = { ...prev };
-        newGuesses[_round][_letterIndex] = pressedKey;
+        newGuesses[_round][_letterIndex] = pressedKey.toLowerCase();
         return newGuesses;
       });
 
@@ -150,20 +169,60 @@ function App() {
     }
   };
 
+  const getDayOfYear = () => {
+    const now = new Date();
+    const start = new Date(now.getFullYear(), 0, 0);
+    const diff = now - start;
+    const oneDay = 1000 * 60 * 60 * 24;
+    return Math.floor(diff / oneDay);
+  };
+
   const handleClick = (key) => {
     const pressedKey = key.toLowerCase();
 
     enterGuess(pressedKey);
   };
 
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      const pressedKey = e.key.toLowerCase();
+  const copyMarkers = () => {
+    let shareText = `Wordle ${getDayOfYear()}`;
+    let shareGuesses = "";
 
-      if (allKeys.includes(pressedKey)) {
-        enterGuess(pressedKey);
-      }
-    };
+    const amountOfGuesses = Object.entries(markers)
+      .filter(([_, guesses]) => !guesses.includes(""))
+      .map((round) => {
+        const [_, guesses] = round;
+
+        guesses.forEach((guess) => {
+          if (guess === "green") {
+            shareGuesses += "🟩";
+          } else if (guess === "yellow") {
+            shareGuesses += "🟨";
+          } else {
+            shareGuesses += "⬛️";
+          }
+        });
+
+        shareGuesses += "\n";
+
+        return "";
+      });
+
+    shareText += ` ${amountOfGuesses.length}/6\n${shareGuesses}`;
+
+    navigator.clipboard.writeText(shareText);
+    setIsShared(true);
+  };
+
+  const handleKeyDown = (e) => {
+    const pressedKey = e.key.toLowerCase();
+
+    if (allKeys.includes(pressedKey)) {
+      enterGuess(pressedKey);
+    }
+  };
+
+  useEffect(() => {
+    Modal.setAppElement("#share");
 
     document.addEventListener("keydown", handleKeyDown);
 
@@ -171,39 +230,68 @@ function App() {
   }, []);
 
   return (
-    <Main>
-      <Header>WORDLE</Header>
-      <GameSection>
-        <TileContainer>
-          {Object.values(guesses).map((word, wordIndex) => (
-            <TileRow key={wordIndex}>
-              {word.map((letter, i) => (
-                <Tile key={i} hint={markers[wordIndex][i]}>
-                  {letter}
-                </Tile>
-              ))}
-            </TileRow>
-          ))}
-        </TileContainer>
-      </GameSection>
-      <KeyboardSection>
-        {keyboardRows.map((keys, i) => (
-          <KeyboardRow key={i}>
-            {i === 1 && <Flex item={0.5} />}
-            {keys.map((key) => (
-              <KeyboardButton
-                key={key}
-                onClick={() => handleClick(key)}
-                flex={["enter", "backspace"].includes(key) ? 1.5 : 1}
-              >
-                {key === "backspace" ? <BackspaceIcon /> : key}
-              </KeyboardButton>
+    <>
+      <Main>
+        <Header>WORDLE</Header>
+        <GameSection>
+          <TileContainer>
+            {Object.values(guesses).map((word, wordIndex) => (
+              <TileRow key={wordIndex}>
+                {word.map((letter, i) => (
+                  <Tile key={i} hint={markers[wordIndex][i]}>
+                    {letter}
+                  </Tile>
+                ))}
+              </TileRow>
             ))}
-            {i === 1 && <Flex item={0.5} />}
-          </KeyboardRow>
-        ))}
-      </KeyboardSection>
-    </Main>
+          </TileContainer>
+        </GameSection>
+        <KeyboardSection>
+          {keyboardRows.map((keys, i) => (
+            <KeyboardRow key={i}>
+              {i === 1 && <Flex item={0.5} />}
+              {keys.map((key) => (
+                <KeyboardButton
+                  key={key}
+                  onClick={() => handleClick(key)}
+                  flex={["enter", "backspace"].includes(key) ? 1.5 : 1}
+                >
+                  {key === "backspace" ? <BackspaceIcon /> : key}
+                </KeyboardButton>
+              ))}
+              {i === 1 && <Flex item={0.5} />}
+            </KeyboardRow>
+          ))}
+        </KeyboardSection>
+      </Main>
+      <div id="share">
+        <Modal
+          isOpen={isModalVisible}
+          onRequestClose={() => setModalVisible(false)}
+          style={{
+            content: {
+              top: "50%",
+              left: "50%",
+              right: "auto",
+              bottom: "auto",
+              marginRight: "-50%",
+              transform: "translate(-50%, -50%)",
+            },
+          }}
+          contentLabel="Share"
+        >
+          <ShareModal>
+            <Heading>You win!</Heading>
+            <Row>
+              <h3>Share</h3>
+              <ShareButton onClick={copyMarkers} disabled={isShared}>
+                {isShared ? "Copied!" : "Share"}
+              </ShareButton>
+            </Row>
+          </ShareModal>
+        </Modal>
+      </div>
+    </>
   );
 }
 

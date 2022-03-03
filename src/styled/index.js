@@ -118,3 +118,38 @@ export const KeyboardButton = styled.button`
 export const Flex = styled.div`
   ${({ item }) => `flex: ${item};`}
 `;
+
+export const ShareModal = styled.div`
+  font-family: "Clear Sans", "Helvetica Neue", Arial, sans-serif;
+`;
+
+export const ShareButton = styled.button`
+  font-size: 18px;
+  padding: 8px 16px;
+  border-radius: 4px;
+  border: 2px solid #3a3a3c;
+
+  transition: background-color 0.2s ease-in;
+
+  &:hover {
+    background-color: #818384;
+  }
+`;
+
+export const Heading = styled.h2`
+  border-bottom: 1px solid #3a3a3c;
+  padding-bottom: 8px;
+
+  font-weight: 700;
+  font-size: 3.6rem;
+  letter-spacing: 0.2rem;
+  text-transform: uppercase;
+`;
+
+export const Row = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  margin: 16px auto;
+`;
