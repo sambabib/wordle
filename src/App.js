@@ -37,6 +37,7 @@ const newGame = {
   2: Array.from({ length: wordLength }).fill(""),
   3: Array.from({ length: wordLength }).fill(""),
   4: Array.from({ length: wordLength }).fill(""),
+  5: Array.from({ length: wordLength }).fill(""),
 };
 
 const fetchWord = (word) => {
@@ -49,7 +50,7 @@ const fetchWord = (word) => {
 };
 
 function App() {
-  const wordOfTheDay = "hello";
+  const wordOfTheDay = "money";
 
   const [guesses, setGuesses] = useState({ ...newGame });
   const [markers, setMarkers] = useState({
@@ -58,6 +59,7 @@ function App() {
     2: Array.from({ length: wordLength }).fill(""),
     3: Array.from({ length: wordLength }).fill(""),
     4: Array.from({ length: wordLength }).fill(""),
+    5: Array.from({ length: wordLength }).fill(""),
   });
   const [isModalVisible, setModalVisible] = useState(false);
   const [isShared, setIsShared] = useState(false);
