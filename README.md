@@ -1,4 +1,5 @@
 # Wordle
+[View Codesandbox](https://codesandbox.io/s/wordle-267oc1?file=/src/App.js)
 
 ## Available Scripts
 
