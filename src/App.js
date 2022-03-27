@@ -303,7 +303,7 @@ function App() {
             <Row>
               <h3>Share</h3>
               <ShareButton onClick={copyMarkers} disabled={isShared}>
-                {isShared ? "Copied!" : "Share"}
+                {isShared ? "Copied!" : "Copy"}
               </ShareButton>
             </Row>
           </ShareModal>
