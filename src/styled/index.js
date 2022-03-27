@@ -33,6 +33,8 @@ export const GameSection = styled.section`
   justify-content: center;
   align-items: center;
   flex-grow: 1;
+
+  margin: 24px 0;
 `;
 export const TileContainer = styled.div`
   display: grid;
@@ -104,6 +106,7 @@ export const KeyboardButton = styled.button`
   border-radius: 4px;
   background-color: #818384;
   font-weight: bold;
+  font-size: 1.2rem;
   text-transform: uppercase;
   color: #d7dadc;
 
