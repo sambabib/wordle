@@ -104,7 +104,18 @@ export const KeyboardButton = styled.button`
 
   border: 0;
   border-radius: 4px;
-  background-color: #818384;
+  ${({ backgroundColor }) => {
+    if (backgroundColor === "green") {
+      return `background-color: #6aaa64;`;
+    }
+    if (backgroundColor === "yellow") {
+      return `background-color: #b59f3b;`;
+    }
+    if (backgroundColor === "grey") {
+      return `background-color: #3a3a3c;`;
+    }
+    return `background-color: #818384;`;
+  }}
   font-weight: bold;
   font-size: 1.2rem;
   text-transform: uppercase;

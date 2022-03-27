@@ -61,6 +61,7 @@ function App() {
     4: Array.from({ length: wordLength }).fill(""),
     5: Array.from({ length: wordLength }).fill(""),
   });
+  const [keyboardMarkers, setKeyboardMarkers] = useState({});
   const [isModalVisible, setModalVisible] = useState(false);
   const [isShared, setIsShared] = useState(false);
 
@@ -224,6 +225,19 @@ function App() {
   };
 
   useEffect(() => {
+    let updatedKeyboardMarkers = {};
+    Object.entries(guesses).forEach(([round, guesses]) => {
+      guesses.forEach((letter, i) => {
+        if (letter === "") return;
+        updatedKeyboardMarkers[letter] = markers[round][i];
+      });
+    });
+
+    setKeyboardMarkers(updatedKeyboardMarkers);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [markers]);
+
+  useEffect(() => {
     Modal.setAppElement("#share");
 
     document.addEventListener("keydown", handleKeyDown);
@@ -231,6 +245,7 @@ function App() {
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, []);
 
+  console.log("keyboardMarkers:", keyboardMarkers);
   return (
     <>
       <Main>
@@ -254,6 +269,7 @@ function App() {
               {i === 1 && <Flex item={0.5} />}
               {keys.map((key) => (
                 <KeyboardButton
+                  backgroundColor={keyboardMarkers[key] ?? "default"}
                   key={key}
                   onClick={() => handleClick(key)}
                   flex={["enter", "backspace"].includes(key) ? 1.5 : 1}
