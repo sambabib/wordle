@@ -239,7 +239,7 @@ function App() {
   return (
     <>
       <Main>
-        <Header>WORDLE</Header>
+        <Header>INI'S WORDLE</Header>
         <GameSection>
           <TileContainer>
             {Object.values(guesses).map((word, wordIndex) => (
