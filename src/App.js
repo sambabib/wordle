@@ -197,7 +197,7 @@ function App() {
       .map((round) => {
         const [_, guesses] = round;
 
-        console.log(_)
+        console.log('underscore', _)
 
         guesses.forEach((guess) => {
           if (guess === "green") {
