@@ -50,7 +50,7 @@ const fetchWord = (word) => {
 };
 
 function App() {
-  const wordOfTheDay = "money";
+  const wordOfTheDay = "peace";
 
   const [guesses, setGuesses] = useState({ ...newGame });
   const [markers, setMarkers] = useState({
@@ -229,7 +229,7 @@ function App() {
     document.addEventListener("keydown", handleKeyDown);
 
     return () => document.removeEventListener("keydown", handleKeyDown);
-  }, []);
+  });
 
   return (
     <>
