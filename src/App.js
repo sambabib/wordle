@@ -194,6 +194,8 @@ function App() {
       .map((round) => {
         const [_, guesses] = round;
 
+        console.log(_)
+
         guesses.forEach((guess) => {
           if (guess === "green") {
             shareGuesses += "🟩";
