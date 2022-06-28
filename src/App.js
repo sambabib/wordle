@@ -40,13 +40,16 @@ const newGame = {
   5: Array.from({ length: wordLength }).fill(""),
 };
 
-const fetchWord = (word) => {
-  return fetch(`${API_URL}/${word}`, {
-    method: "GET",
-  })
-    .then((res) => res.json())
-    .then((res) => res)
-    .catch((err) => console.log("err:", err));
+const fetchWord = async (word) => {
+  try {
+    const res = await fetch(`${API_URL}/${word}`, {
+      method: "GET",
+    });
+    const res_1 = await res.json();
+    return res_1;
+  } catch (err) {
+    return console.log("err:", err);
+  }
 };
 
 function App() {
